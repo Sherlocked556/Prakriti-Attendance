@@ -1,6 +1,6 @@
 package com.example.toyo.barcodereader;
 
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -10,16 +10,14 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.android.volley.Request;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.HashMap;
-import java.util.Map;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
     private Button scanBtn;
@@ -51,6 +49,25 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             String scanFormat = scanningResult.getFormatName();
             formatTxt.setText("FORMAT: " + scanFormat);
             contentTxt.setText("CONTENT: " + scanContent);
+            //calling get request function and passing the recieved enroll no : scanContext
+            Call<ResponseBody> call = retrofit.getInstance().getapi().getusers(scanContent);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+
+                    Toast.makeText(MainActivity.this,response.message(),Toast.LENGTH_LONG).show();
+
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(MainActivity.this,t.getMessage(),Toast.LENGTH_LONG).show();
+
+                }
+            });
+
+
 
         }
         else{
